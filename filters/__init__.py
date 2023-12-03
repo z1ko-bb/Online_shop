@@ -1,6 +1,7 @@
 from aiogram import Dispatcher
 
 from loader import dp
+from .private import IsPrivate
 # from .is_admin import AdminFilter
 
 
