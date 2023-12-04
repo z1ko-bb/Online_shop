@@ -47,7 +47,10 @@ class Database:
         id SERIAL PRIMARY KEY,
         full_name VARCHAR(255) NOT NULL,
         username varchar(255) NULL,
-        telegram_id BIGINT NOT NULL UNIQUE
+        telegram_id BIGINT NOT NULL UNIQUE,
+        phone_number VARCHAR(255) NOT NULL,
+        lang VARCHAR(20),
+        location TEXT
         );
         """
         await self.execute(sql, execute=True)
