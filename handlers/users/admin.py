@@ -4,12 +4,13 @@ from data.config import ADMINS
 from loader import dp, db, bot
 import pandas as pd
 
-@dp.message_handler(text="/allusers", user_id=ADMINS)
+@dp.message_handler(text="/allusers", user_id=ADMINS, state="*")
 async def get_all_users(message: types.Message):
     users = await db.select_all_users()
     id = []
     name = []
     for user in users:
+        print(users)
         id.append(user[-1])
         name.append(user[1])
     data = {
@@ -37,3 +38,11 @@ async def send_ad_to_all(message: types.Message):
 async def get_all_users(message: types.Message):
     await db.delete_users()
     await message.answer("Baza tozalandi!")
+
+
+@dp.message_handler(text="/getusers", user_id=ADMINS, state='*')
+async def get_users(message: types.Message):
+    users = await db.select_all_users()
+    print(users)
+    for user in users:
+        await message.answer(text=f"username:    {user['username']}")

@@ -48,9 +48,11 @@ class Database:
         full_name VARCHAR(255) NOT NULL,
         username varchar(255) NULL,
         telegram_id BIGINT NOT NULL UNIQUE,
-        phone_number VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(255),
         lang VARCHAR(20),
-        location TEXT
+        location_lattitude TEXT,
+        location_longetude TEXT,
+        confirm TEXT
         );
         """
         await self.execute(sql, execute=True)
@@ -65,6 +67,10 @@ class Database:
     async def add_user(self, full_name, username, telegram_id):
         sql = "INSERT INTO users (full_name, username, telegram_id) VALUES($1, $2, $3) returning *"
         return await self.execute(sql, full_name, username, telegram_id, fetchrow=True)
+    
+    async def update_user_info_for_confirm(self, name, lang, phone_number, location_lat, location_long, confirm, telegram_id):
+        sql = "UPDATE Users SET username=$1, lang=$2, phone_number=$3, location_lattitude=$4, location_longetude=$5, confirm=$6 WHERE telegram_id=$7"
+        return await self.execute(sql, name, lang, phone_number, location_lat, location_long, confirm, telegram_id, execute=True)
 
     async def select_all_users(self):
         sql = "SELECT * FROM Users"
