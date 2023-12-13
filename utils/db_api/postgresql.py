@@ -56,6 +56,40 @@ class Database:
         );
         """
         await self.execute(sql, execute=True)
+    
+    async def create_table_cats(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Category (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255),
+        description TEXT
+        );
+        """
+        await self.execute(sql, execute=True)
+
+    async def create_table_subcats(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Sub_Category (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255),
+        description TEXT,
+        category_id BIGINT 
+        );
+        """
+        await self.execute(sql, execute=True)
+    
+    async def create_table_product(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS Product (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255),
+        description TEXT,
+        img_url VARCHAR(255),
+        price REAL NOT NULL,
+        sub_category_id BIGINT NOT NULL
+        );
+        """
+        await self.execute(sql, execute=True)
 
     @staticmethod
     def format_args(sql, parameters: dict):
@@ -88,9 +122,41 @@ class Database:
     async def update_user_username(self, username, telegram_id):
         sql = "UPDATE Users SET username=$1 WHERE telegram_id=$2"
         return await self.execute(sql, username, telegram_id, execute=True)
+    
+    async def user_confirm(self, telegram_id):
+        sql = "SELECT confirm FROM Users WHERE telegram_id=$1"
+        return await self.execute(sql, telegram_id, fetchrow=True)
 
     async def delete_users(self):
         await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
 
     async def drop_users(self):
         await self.execute("DROP TABLE Users", execute=True)
+
+    async def get_all_cats(self):
+        sql = "SELECT * FROM Category"
+        return await self.execute(sql, fetch=True)
+    
+    async def get_all_sub_cats(self):
+        sql = "SELECT * FROM Sub_Category"
+        return await self.execute(sql, fetch=True)
+    
+    async def get_sub_cats_by_cat_id(self, cat_id):
+        sql = "SELECT * FROM Sub_Category WHERE category_id=$1"
+        return await self.execute(sql, cat_id, fetch=True)
+    
+    async def get_products_by_sub_cat_id(self, sub_cat_id):
+        sql = "SELECT * FROM Product WHERE sub_category_id=$1"
+        return await self.execute(sql, sub_cat_id, fetch=True)
+    
+    async def add_category(self, title, desc):
+        sql = "INSERT INTO Category (title, description) VALUES($1, $2) returning *"
+        return await self.execute(sql, title, desc, fetchrow=True)
+
+    async def add_sub_category(self, title, cat_id, desc):
+        sql = "INSERT INTO Sub_Category (title, description, category_id) VALUES($1, $2, $3) returning *"
+        return await self.execute(sql, title, desc, cat_id, fetchrow=True)
+    
+    async def add_product(self, title, desc, price, sub_cat_id):
+        sql = "INSERT INTO Product (title, description, price, sub_category_id) VALUES($1, $2, $3, $4) returning *"
+        return await self.execute(sql, title, desc, price, sub_cat_id, fetchrow=True)

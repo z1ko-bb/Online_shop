@@ -43,6 +43,6 @@ async def get_all_users(message: types.Message):
 @dp.message_handler(text="/getusers", user_id=ADMINS, state='*')
 async def get_users(message: types.Message):
     users = await db.select_all_users()
-    print(users)
+    print(message["from"]["id"])
     for user in users:
         await message.answer(text=f"username:    {user['username']}")

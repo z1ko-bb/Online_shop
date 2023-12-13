@@ -4,9 +4,8 @@ from aiogram import types
 from states.user_state import UserForm
 from aiogram.dispatcher import FSMContext
 from keyboards.default.new import phone_number, location
-from aiogram.types import ReplyKeyboardRemove
-from keyboards.inline.user_information import confirm
-from keyboards.inline.user_information import lang
+from keyboards.inline.user_information import confirm, lang
+from keyboards.default.keyboards import main_menu
 
 @dp.callback_query_handler(text="uzb", state=UserForm.lang)
 async def set_lang(call: types.CallbackQuery, state: FSMContext):
@@ -80,4 +79,4 @@ async def confirm_yes(call: types.CallbackQuery, state: FSMContext):
     confirm = "yes"
 
     await db.update_user_info_for_confirm(name, lang, phone_number, location_lat, location_long, confirm, telegram_id=tg_id)
-    await call.message.answer(text=".", reply_markup=ReplyKeyboardRemove())
+    await call.message.answer(text="🥳🥳Ro`yhatdan muvaffaqiyatli ottingiz.\nBotdan foydalanishingiz mumkin!", reply_markup=main_menu) 
